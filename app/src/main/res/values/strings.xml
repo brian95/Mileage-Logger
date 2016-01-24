@@ -12,4 +12,13 @@
     <string name="title_month_detail">Month Detail</string>
     <string name="title_activity_home_screen">HomeScreenActivity</string>
     <string name="logout">Logout</string>
+    <string name="title_activity_create_appointment">CreateAppointmentActivity</string>
+    <string name="appointment_name">Appointment Name</string>
+    <string name="appointment_address">Appointment Address</string>
+    <string name="add">Add</string>
+    <string name="title_activity_create_place">CreatePlaceActivity</string>
+    <string name="start_location">Start Location</string>
+    <string name="end_location">End Location</string>
+    <string name="google_app_id"></string>
+    <string name="calc_miles">Calculate Miles</string>
 </resources>

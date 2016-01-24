@@ -1,5 +1,6 @@
 package com.example.brianmote.mileagelogger.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,9 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import com.example.brianmote.mileagelogger.Helpers.User;
+import com.example.brianmote.mileagelogger.Helpers.ParseAuthHelper;
+import com.example.brianmote.mileagelogger.Helpers.ProgressDialogHelper;
+import com.example.brianmote.mileagelogger.Listeners.AuthListener;
 import com.example.brianmote.mileagelogger.R;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import butterknife.Bind;
@@ -18,7 +23,9 @@ import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Login Activity";
-    private User user;
+    private ParseAuthHelper parseAuthHelper;
+    private ProgressDialogHelper dialogHelper;
+    private ProgressDialog dialog;
 
     @Bind(R.id.loginUsername)
     EditText loginUsername;
@@ -44,12 +51,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         registerBtn.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
 
-        if (user == null) {
-            user = new User();
+        if (parseAuthHelper == null) {
+            parseAuthHelper = new ParseAuthHelper();
         }
 
-        if (user.isStillLoggedIn()) {
-            Log.d(TAG, "User still logged in as " + ParseUser.getCurrentUser().getUsername());
+        if (parseAuthHelper.isStillLoggedIn()) {
+            Log.d(TAG, "ParseAuthHelper still logged in as " + ParseUser.getCurrentUser().getUsername());
             Intent intent = new Intent(LoginActivity.this, HomeScreenActivity.class);
             startActivity(intent);
         }
@@ -66,24 +73,38 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 break;
             case R.id.loginBtn:
-                //Logging In User
+                //Logging in
+                if (dialog == null){
+                    dialog = new ProgressDialog(LoginActivity.this);
+                }
+                if (dialogHelper == null){
+                    dialogHelper = new ProgressDialogHelper(dialog);
+                }
+                if (!dialog.isShowing()){
+                    dialogHelper.buildDialog();
+                }
+                Log.d(TAG, "Login Btn Clicked");
+
                 username = loginUsername.getText().toString();
                 password = loginPassword.getText().toString();
+                parseAuthHelper.login(username, password, new AuthListener() {
+                    @Override
+                    public void completed(ParseException e) {
+                        if (dialog.isShowing()){
+                            dialog.dismiss();
+                        }
 
-                if (user.getUsername() == null) {
-                    user.setUsername(username);
-                }
+                        String msg;
+                        if (e == null){
+                            msg = "Logging in";
+                            startActivity(new Intent(LoginActivity.this, HomeScreenActivity.class));
+                        } else {
+                            msg = e.getMessage();
+                        }
+                        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
 
-                if (user.getPassword() == null) {
-                    user.setPassword(password);
-                }
-
-                user.login(LoginActivity.this, user);
-
-                Log.d(TAG, "Login Btn Clicked");
-                Log.d(TAG, "Username: " + username);
-                Log.d(TAG, "Password: " + password);
-                break;
         }
     }
 }

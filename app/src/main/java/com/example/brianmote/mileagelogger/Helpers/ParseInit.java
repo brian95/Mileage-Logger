@@ -2,11 +2,9 @@ package com.example.brianmote.mileagelogger.Helpers;
 
 import android.app.Application;
 
-import com.example.brianmote.mileagelogger.Helpers.Appointment;
 import com.parse.Parse;
 import com.parse.ParseObject;
-
-import com.example.brianmote.mileagelogger.Helpers.User;
+import com.parse.ParseUser;
 
 /**
  * Created by Brian Mote on 1/21/2016.
@@ -20,6 +18,7 @@ public class ParseInit extends Application {
         super.onCreate();
 
         ParseObject.registerSubclass(Appointment.class);
+        ParseUser.registerSubclass(ParseAuthHelper.class);
         Parse.initialize(this, PARSE_APP_ID_KEY, PARSE_CLIENT_KEY);
     }
 }

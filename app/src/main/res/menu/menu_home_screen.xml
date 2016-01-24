@@ -9,4 +9,11 @@
         android:title="@string/logout"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_action_add"
+        android:title="@string/add"
+        android:orderInCategory="1"
+        app:showAsAction="always" />
+
 </menu>
